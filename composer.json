@@ -1,0 +1,14 @@
+{
+  "name": "conectaflow/messaging-saas",
+  "description": "Multi-tenant WhatsApp Cloud API SaaS",
+  "type": "project",
+  "require": {
+    "php": ">=8.2",
+    "phpoffice/phpspreadsheet": "^2.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "ConectaFlow\\": "src/"
+    }
+  }
+}
