@@ -27,11 +27,12 @@ Micro SaaS multi-tenant para CRM, campanhas e atendimento via WhatsApp Business 
 
 1. Copie `.env.example` para `.env` e preencha o banco.
 2. Crie o banco e importe `database/schema.sql`.
-3. Gere uma senha para o usuário inicial com `php bin/hash-password.php` e atualize o hash em `users`.
-4. Sirva a pasta `public/` com PHP-FPM/Apache/Nginx. O document root deve ser `public/`.
-5. Configure o webhook da Meta apontando para `https://SEU_DOMINIO/webhook.php`.
-6. Execute um worker persistente: `php bin/worker.php`.
-7. Execute o agendador a cada minuto: `php bin/cron.php`.
+3. Para apresentar o produto com dados de exemplo, importe também `database/demo_data.sql`.
+4. Gere uma senha para o usuário inicial com `php bin/hash-password.php` e atualize o hash em `users`.
+5. Sirva a pasta `public/` com PHP-FPM/Apache/Nginx. O document root deve ser `public/`.
+6. Configure o webhook da Meta apontando para `https://SEU_DOMINIO/webhook.php`.
+7. Execute um worker persistente: `php bin/worker.php`.
+8. Execute o agendador a cada minuto: `php bin/cron.php`.
 
 ## Integração Meta
 
