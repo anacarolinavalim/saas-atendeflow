@@ -1,65 +1,320 @@
 # ConectaFlow
 
-Micro SaaS multi-tenant para CRM, campanhas e atendimento via WhatsApp Business Platform / Meta Cloud API.
+### CRM, campanhas e atendimento. Tudo conectado ao WhatsApp.
 
-## O que já está incluído
+**ConectaFlow** é uma plataforma SaaS multi-tenant desenvolvida para centralizar o relacionamento com clientes, organizar leads, gerenciar campanhas e automatizar processos de atendimento utilizando a **WhatsApp Business Platform — Meta Cloud API**.
 
-- Autenticação com `password_hash`, sessão segura e CSRF.
-- Isolamento por empresa em todas as consultas da aplicação.
-- Dashboard com indicadores, gráficos e capacidade da conta.
-- CRM de contatos, tags, grupos, consentimento e supressão.
-- Campanhas segmentadas, prévia, agendamento e progresso.
-- Fila persistente com lock, retentativas e idempotência.
-- Cliente oficial da Meta Cloud API, webhook verificado e registro de eventos.
-- Caixa de entrada com conversas e atribuição.
-- Automações/funis com etapas persistidas.
-- Planos, assinaturas, uso, faturamento e painel administrativo.
-- Esquema MySQL normalizado, índices, foreign keys e dados iniciais.
+Uma solução para empresas que desejam profissionalizar sua comunicação, acompanhar oportunidades comerciais e manter todo o histórico de relacionamento em um único lugar.
 
-## Requisitos
+---
 
-- PHP 8.2+ com extensões `pdo_mysql`, `curl`, `json`, `mbstring` e `openssl`.
-- MySQL 8.0+.
-- Composer (opcional; o projeto não depende de framework).
-- Um cron ou worker contínuo para `bin/worker.php` e `bin/cron.php`.
+## Visão geral
 
-## Instalação rápida
+O ConectaFlow reúne ferramentas de CRM, marketing e atendimento em uma única plataforma, permitindo que cada empresa gerencie sua própria operação de forma independente e segura.
 
-1. Copie `.env.example` para `.env` e preencha o banco.
-2. Crie o banco e importe `database/schema.sql`.
-3. Para apresentar o produto com dados de exemplo, importe também `database/demo_data.sql`.
-4. Gere uma senha para o usuário inicial com `php bin/hash-password.php` e atualize o hash em `users`.
-5. Sirva a pasta `public/` com PHP-FPM/Apache/Nginx. O document root deve ser `public/`.
-6. Configure o webhook da Meta apontando para `https://SEU_DOMINIO/webhook.php`.
-7. Execute um worker persistente: `php bin/worker.php`.
-8. Execute o agendador a cada minuto: `php bin/cron.php`.
+**Principais benefícios:**
 
-## Integração Meta
+Para uma instalação rápida, copie `.env.example` para `.env`, ajuste o MariaDB e importe `database/schema.sql`. Para apresentar o produto com dados de exemplo, importe também `database/demo_data.sql`.
 
-Cada empresa deve cadastrar sua própria WABA, Phone Number ID e token de acesso. Nunca reutilize tokens entre tenants. A tela de configurações persiste apenas um token criptografado quando `APP_KEY` estiver configurada; em produção, prefira um secret manager.
+- Centralização dos contatos e históricos de atendimento.
+- Organização de leads por tags, grupos e status.
+- Campanhas segmentadas e agendadas.
+- Acompanhamento de mensagens e resultados.
+- Gestão de conversas e atribuição de atendentes.
+- Automações comerciais e funis de relacionamento.
+- Controle de planos, assinaturas e utilização.
 
-O cliente usa somente endpoints oficiais da Graph API. Templates, categorias, janela de atendimento, limites e custos devem ser confirmados na conta da empresa e nas regras vigentes da Meta. O sistema não implementa rotação de números, automação de WhatsApp Web ou qualquer contorno de limites.
+---
 
-O webhook valida o `META_WEBHOOK_VERIFY_TOKEN`, grava o payload bruto e atualiza mensagens/conversas de forma idempotente. Configure também `META_APP_SECRET` para validar a assinatura `X-Hub-Signature-256`.
+## Funcionalidades
 
-## Segurança e operação
+### 01. Dashboard inteligente
 
-- Defina `APP_ENV=production`, `APP_KEY` forte e cookies HTTPS.
-- Desabilite exibição de erros e envie logs para um coletor.
-- Use um usuário MySQL sem privilégios de administração.
-- Configure backups, retenção de logs e política LGPD de retenção/eliminação.
-- Revise consentimento, templates aprovados e categorias antes de qualquer disparo.
-- Adicione o provedor de cobrança recorrente escolhido implementando a interface de billing; o banco já suporta planos, assinaturas e registros de cobrança.
+Acompanhe os principais indicadores da operação em uma visão centralizada.
 
-## Estrutura
+- Total de contatos cadastrados.
+- Campanhas e mensagens enviadas.
+- Indicadores de entrega e falhas.
+- Desempenho das campanhas.
+- Capacidade e utilização da conta.
+- Gráficos e métricas de acompanhamento.
+
+### 02. CRM de contatos
+
+Gerencie seus clientes e potenciais compradores de maneira organizada.
+
+- Cadastro e edição de contatos.
+- Tags e grupos personalizados.
+- Classificação por status.
+- Histórico de interações.
+- Registro de consentimento.
+- Lista de supressão para contatos que não devem receber campanhas.
+
+### 03. Campanhas de WhatsApp
+
+Crie campanhas direcionadas utilizando a integração oficial da Meta.
+
+- Criação e gerenciamento de campanhas.
+- Segmentação por tags, grupos e status.
+- Prévia antes do envio.
+- Agendamento de campanhas.
+- Acompanhamento do progresso.
+- Controle de mensagens pendentes, enviadas e com falha.
+- Processamento por fila persistente.
+
+### 04. Atendimento e caixa de entrada
+
+Organize as conversas e facilite o acompanhamento dos clientes.
+
+- Caixa de entrada centralizada.
+- Histórico de mensagens.
+- Organização de conversas.
+- Atribuição de atendentes.
+- Registro de eventos e atualizações.
+- Integração com webhooks da Meta.
+
+### 05. Automações e funis
+
+Estruture processos comerciais para acompanhar os contatos durante sua jornada.
+
+- Funis de relacionamento.
+- Etapas personalizadas.
+- Movimentação de contatos entre etapas.
+- Persistência das informações.
+- Organização do processo comercial.
+
+### 06. Gestão SaaS e administração
+
+Estrutura preparada para oferecer a plataforma como serviço.
+
+- Cadastro de empresas independentes.
+- Planos e limites de utilização.
+- Assinaturas.
+- Registro de cobranças.
+- Controle de consumo.
+- Painel administrativo.
+- Gestão de contas e usuários.
+
+---
+
+## Arquitetura e tecnologias
+
+| Tecnologia | Aplicação |
+|---|---|
+| PHP 8.2+ | Backend e regras de negócio |
+| MySQL 8.0+ | Banco de dados relacional |
+| PDO | Acesso seguro ao banco |
+| JavaScript | Interatividade da interface |
+| HTML5 / CSS3 | Estrutura e apresentação |
+| Meta Graph API | Integração oficial com WhatsApp |
+| Webhooks | Recebimento de eventos |
+| Cron / Worker | Processamento e agendamento |
+
+**Arquitetura:** PHP puro, sem dependência obrigatória de frameworks, com separação de responsabilidades entre autenticação, infraestrutura e domínio.
+
+---
+
+## Segurança e isolamento
+
+A plataforma foi estruturada considerando a operação de múltiplas empresas em um mesmo ambiente.
+
+- Isolamento de dados por empresa (multi-tenant).
+- Autenticação com `password_hash`.
+- Sessões com configurações de segurança.
+- Proteção CSRF.
+- Consultas parametrizadas com PDO.
+- Criptografia de tokens de integração.
+- Verificação de assinatura dos webhooks.
+- Processamento idempotente de eventos.
+- Controle de concorrência e retentativas na fila.
+
+### Integração oficial com a Meta
+
+Cada empresa utiliza suas próprias credenciais de integração:
+
+- WABA ID.
+- Phone Number ID.
+- Access Token.
+- Webhook de recebimento.
+- Chave de verificação e assinatura.
+
+O ConectaFlow utiliza a API oficial da Meta, respeitando as políticas de mensagens, templates aprovados, categorias, janelas de atendimento e limites aplicáveis à conta.
+
+**Não utiliza automação de WhatsApp Web, rotação de números ou mecanismos de contorno dos limites da plataforma.**
+
+---
+
+## Estrutura do projeto
 
 ```text
-public/       front controller, webhook e assets
-src/          autenticação, banco, Meta client e domínio
-bin/          worker, cron e hash de senha
-database/     schema MySQL
+ConectaFlow/
+│
+├── public/
+│   ├── index.php
+│   ├── webhook.php
+│   └── assets/
+│
+├── src/
+│   ├── Auth/
+│   ├── Database/
+│   ├── Meta/
+│   └── Domain/
+│
+├── bin/
+│   ├── worker.php
+│   ├── cron.php
+│   └── hash-password.php
+│
+├── database/
+│   └── schema.sql
+│
+├── .env.example
+└── README.md
 ```
 
-## Usuário inicial
+---
 
-O schema cria a empresa e um usuário de demonstração com e-mail `admin@demo.local` e senha inicial `ChangeMe123!`. Gere uma senha nova com o comando indicado acima e atualize o registro antes de usar em qualquer ambiente compartilhado.
+## Instalação
+
+### Pré-requisitos
+
+- PHP 8.2 ou superior.
+- MySQL 8.0 ou superior.
+- Extensões PHP: `pdo_mysql`, `curl`, `json`, `mbstring` e `openssl`.
+- Apache, Nginx ou PHP-FPM.
+- Composer opcional.
+- Cron ou processo worker contínuo.
+
+### 1. Clonar o projeto
+
+```bash
+git clone URL_DO_REPOSITORIO
+cd ConectaFlow
+```
+
+### 2. Configurar ambiente
+
+Copie o arquivo de exemplo:
+
+```bash
+cp .env.example .env
+```
+
+Configure as credenciais do banco de dados e as demais variáveis necessárias.
+
+### 3. Criar o banco
+
+Crie o banco MySQL e importe o esquema:
+
+```bash
+mysql -u root -p -e "CREATE DATABASE conectaflow CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+```
+
+```bash
+mysql -u root -p conectaflow < database/schema.sql
+```
+
+### 4. Configurar o usuário inicial
+
+Gere um novo hash de senha:
+
+```bash
+php bin/hash-password.php
+```
+
+Atualize o hash correspondente ao usuário inicial na tabela `users`.
+
+### 5. Configurar o servidor
+
+Configure o document root apontando exclusivamente para:
+
+```text
+ConectaFlow/public/
+```
+
+Não exponha diretamente os diretórios `src`, `bin`, `database` ou os arquivos de configuração.
+
+### 6. Iniciar o processamento
+
+Execute o worker:
+
+```bash
+php bin/worker.php
+```
+
+Configure o cron para executar o agendador a cada minuto:
+
+```cron
+* * * * * cd /caminho/ConectaFlow && php bin/cron.php
+```
+
+### 7. Configurar a Meta Cloud API
+
+Configure o webhook no painel de desenvolvedores da Meta:
+
+```text
+https://SEU_DOMINIO/webhook.php
+```
+
+Informe as credenciais e os tokens necessários no ambiente da aplicação.
+
+---
+
+## Configurações de produção
+
+Antes de disponibilizar o sistema:
+
+- Defina `APP_ENV=production`.
+- Configure uma `APP_KEY` forte.
+- Utilize HTTPS.
+- Proteja os tokens de integração.
+- Configure backups automáticos.
+- Restrinja os privilégios do usuário MySQL.
+- Configure logs e monitoramento.
+- Implemente política de retenção e eliminação de dados conforme a LGPD.
+- Configure o gerenciamento de processos do worker.
+- Implemente o provedor de cobrança recorrente escolhido.
+
+**Importante:** o banco já possui estrutura para planos, assinaturas e registros de cobrança. A integração efetiva com um gateway de pagamento depende da implementação do respectivo provedor.
+
+---
+
+## Usuário de demonstração
+
+O esquema inicial disponibiliza:
+
+| Campo | Valor |
+|---|---|
+| E-mail | `admin@demo.local` |
+| Senha inicial | `ChangeMe123!` |
+
+**Atenção:** altere a senha antes de utilizar o sistema em qualquer ambiente compartilhado ou de produção.
+
+---
+
+## Roadmap
+
+Possíveis evoluções do ConectaFlow:
+
+- [ ] Integração com gateway de pagamento.
+- [ ] Relatórios avançados de campanhas.
+- [ ] Gestão de múltiplos atendentes e permissões.
+- [ ] Notificações em tempo real.
+- [ ] Relatórios de conversão dos funis.
+- [ ] Exportação de relatórios.
+- [ ] Monitoramento operacional.
+- [ ] Aplicativo PWA.
+
+---
+
+## Sobre o projeto
+
+O **ConectaFlow** foi concebido como uma solução SaaS para aproximar empresas de seus clientes por meio de uma comunicação organizada, profissional e integrada.
+
+Mais do que uma ferramenta de disparos, a proposta é oferecer uma estrutura completa de relacionamento comercial: do primeiro contato ao acompanhamento, atendimento e conversão.
+
+**ConectaFlow — Seu relacionamento com clientes, conectado em um só lugar.**
+
+---
+
+<sub>Desenvolvido com PHP, MySQL e integração oficial com a Meta WhatsApp Business Platform.</sub>
